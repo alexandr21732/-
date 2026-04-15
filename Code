@@ -23,3 +23,16 @@ def encrypt_data(public_key, message: str) -> bytes:
         )
     )
     return ciphertext
+def decrypt_data(private_key, ciphertext: bytes) -> str:
+    """Расшифровывает сообщение с использованием закрытого ключа."""
+    # Расшифровываем
+    plaintext_bytes = private_key.decrypt(
+        ciphertext,
+        padding.OAEP(
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label=None
+        )
+    )
+    # Преобразуем байты обратно в строку
+    return plaintext_bytes.decode('utf-8')
