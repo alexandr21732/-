@@ -8,4 +8,18 @@ def generate_keys():
     )
     public_key = private_key.public_key()
     return private_key, public_key
-
+def encrypt_data(public_key, message: str) -> bytes:
+    """Шифрует сообщение с использованием открытого ключа."""
+    # Преобразуем строку в байты
+    message_bytes = message.encode('utf-8')
+    
+    # Шифруем с использованием OAEP (Optimal Asymmetric Encryption Padding)
+    ciphertext = public_key.encrypt(
+        message_bytes,
+        padding.OAEP(
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label=None
+        )
+    )
+    return ciphertext
