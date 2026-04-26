@@ -1,6 +1,6 @@
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import hashes
-
+import base64
 def generate_keys():
     """Генерирует пару ключей: закрытый и открытый."""
     private_key = rsa.generate_private_key(
@@ -12,10 +12,7 @@ def generate_keys():
 
 def encrypt_data(public_key, message: str) -> bytes:
     """Шифрует сообщение с использованием открытого ключа."""
-    # Преобразуем строку в байты
     message_bytes = message.encode('utf-8')
-    
-    # Шифруем с использованием OAEP (Optimal Asymmetric Encryption Padding)
     ciphertext = public_key.encrypt(
         message_bytes,
         padding.OAEP(
@@ -28,7 +25,6 @@ def encrypt_data(public_key, message: str) -> bytes:
 
 def decrypt_data(private_key, ciphertext: bytes) -> str:
     """Расшифровывает сообщение с использованием закрытого ключа."""
-    # Расшифровываем
     plaintext_bytes = private_key.decrypt(
         ciphertext,
         padding.OAEP(
@@ -37,5 +33,56 @@ def decrypt_data(private_key, ciphertext: bytes) -> str:
             label=None
         )
     )
-    # Преобразуем байты обратно в строку
     return plaintext_bytes.decode('utf-8')
+
+def menu():
+    print("RSA Шифрование")
+    print("1. Сгенерировать новую пару ключей")
+    print("2. Зашифровать сообщение")
+    print("3. Расшифровать сообщение")
+    print("4. Выход")
+
+def main():
+    private_key = None
+    public_key = None
+
+    while True:
+        display_menu()
+        choice = input("Выберите действие (1-4): ").strip()
+
+        if choice == '1':
+            private_key, public_key = generate_keys()
+            print("Ключи успешно сгенерированы.")
+
+        elif choice == '2':
+            if not public_key:
+                print("Сначала сгенерируйте ключи (опция 1).")
+                continue
+            message = input("Введите сообщение для шифрования: ")
+            try:
+                ciphertext = encrypt_data(public_key, message)
+                # Для удобства вывода кодируем в base64
+                print("Зашифрованное сообщение (base64):")
+                print(base64.b64encode(ciphertext).decode('utf-8'))
+            except Exception as e:
+                print(f"Ошибка при шифровании: {e}")
+
+        elif choice == '3':
+            if not private_key:
+                print("Сначала сгенерируйте ключи (опция 1).")
+                continue
+            b64_ciphertext = input("Введите зашифрованное сообщение (base64): ")
+            try:
+                ciphertext = base64.b64decode(b64_ciphertext)
+                plaintext = decrypt_data(private_key, ciphertext)
+                print("Расшифрованное сообщение:")
+                print(plaintext)
+            except Exception as e:
+                print(f"Ошибка при расшифровке: {e}")
+
+        elif choice == '4':
+            print("Выход из программы.")
+            break
+
+        else:
+            print("Неверный выбор. Пожалуйста, введите число от 1 до 4.")
