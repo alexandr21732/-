@@ -1,6 +1,7 @@
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import hashes
 import base64
+
 def generate_keys():
     """Генерирует пару ключей: закрытый и открытый."""
     private_key = rsa.generate_private_key(
@@ -35,7 +36,7 @@ def decrypt_data(private_key, ciphertext: bytes) -> str:
     )
     return plaintext_bytes.decode('utf-8')
 
-def menu():
+def display_menu():
     print("RSA Шифрование")
     print("1. Сгенерировать новую пару ключей")
     print("2. Зашифровать сообщение")
@@ -52,37 +53,40 @@ def main():
 
         if choice == '1':
             private_key, public_key = generate_keys()
-            print("Ключи успешно сгенерированы.")
+            print("✅ Ключи успешно сгенерированы.")
 
         elif choice == '2':
             if not public_key:
-                print("Сначала сгенерируйте ключи (опция 1).")
+                print("❎ Сначала сгенерируйте ключи (опция 1).")
                 continue
             message = input("Введите сообщение для шифрования: ")
             try:
                 ciphertext = encrypt_data(public_key, message)
                 # Для удобства вывода кодируем в base64
-                print("Зашифрованное сообщение (base64):")
+                print("✅ Зашифрованное сообщение (base64):")
                 print(base64.b64encode(ciphertext).decode('utf-8'))
             except Exception as e:
-                print(f"Ошибка при шифровании: {e}")
+                print(f"✗ Ошибка при шифровании: {e}")
 
         elif choice == '3':
             if not private_key:
-                print("Сначала сгенерируйте ключи (опция 1).")
+                print("❎ Сначала сгенерируйте ключи (опция 1).")
                 continue
             b64_ciphertext = input("Введите зашифрованное сообщение (base64): ")
             try:
                 ciphertext = base64.b64decode(b64_ciphertext)
                 plaintext = decrypt_data(private_key, ciphertext)
-                print("Расшифрованное сообщение:")
+                print("✅ Расшифрованное сообщение:")
                 print(plaintext)
             except Exception as e:
-                print(f"Ошибка при расшифровке: {e}")
+                print(f"❎ Ошибка при расшифровке: {e}")
 
         elif choice == '4':
-            print("Выход из программы.")
+            print("До свидания!")
             break
 
         else:
-            print("Неверный выбор. Пожалуйста, введите число от 1 до 4.")
+            print("❎ Неверный выбор. Пожалуйста, введите число от 1 до 4.")
+
+if name == "main":
+    main()
