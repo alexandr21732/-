@@ -46,15 +46,12 @@ def display_menu():
 def main():
     private_key = None
     public_key = None
-
     while True:
         display_menu()
         choice = input("Выберите действие (1-4): ").strip()
-
         if choice == '1':
             private_key, public_key = generate_keys()
             print("✅ Ключи успешно сгенерированы.")
-
         elif choice == '2':
             if not public_key:
                 print("❎ Сначала сгенерируйте ключи (опция 1).")
@@ -62,12 +59,10 @@ def main():
             message = input("Введите сообщение для шифрования: ")
             try:
                 ciphertext = encrypt_data(public_key, message)
-                # Для удобства вывода кодируем в base64
                 print("✅ Зашифрованное сообщение (base64):")
                 print(base64.b64encode(ciphertext).decode('utf-8'))
             except Exception as e:
                 print(f"✗ Ошибка при шифровании: {e}")
-
         elif choice == '3':
             if not private_key:
                 print("❎ Сначала сгенерируйте ключи (опция 1).")
@@ -80,13 +75,10 @@ def main():
                 print(plaintext)
             except Exception as e:
                 print(f"❎ Ошибка при расшифровке: {e}")
-
         elif choice == '4':
             print("До свидания!")
             break
-
         else:
             print("❎ Неверный выбор. Пожалуйста, введите число от 1 до 4.")
 
-if name == "main":
-    main()
+main()
